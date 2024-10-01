@@ -1,4 +1,4 @@
-# Code for "Plug-and-Play Gibbs sampler: Emnedding Deep Generative Priors in Bayesian Inference"
+# Code for "Plug-and-Play Gibbs sampler: Embedding Deep Generative Priors in Bayesian Inference"
 
 ### 1) Install packages
 
