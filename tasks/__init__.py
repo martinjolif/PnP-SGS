@@ -1,4 +1,24 @@
 from abc import ABC, abstractmethod
+# =================
+# Operation classes
+# =================
+
+__OPERATOR__ = {}
+
+def register_operator(name: str):
+    def wrapper(cls):
+        if __OPERATOR__.get(name, None):
+            raise NameError(f"Name {name} is already registered!")
+        __OPERATOR__[name] = cls
+        return cls
+    return wrapper
+
+
+def create_operator(name: str, **kwargs):
+    if __OPERATOR__.get(name, None) is None:
+        raise NameError(f"Name {name} is not defined.")
+    return __OPERATOR__[name](**kwargs)
+    
 
 class LinearOperator(ABC):
     @abstractmethod
@@ -21,3 +41,6 @@ class LinearOperator(ABC):
 
     def likelihood_gradient(self, data, y, sigma, **kwargs):
         return self.transpose(self.forward(data, **kwargs) - y).reshape(*data.shape) / sigma**2
+
+from .gaussian_blur import GaussialBlur
+from .motion_blur import MotionBlur

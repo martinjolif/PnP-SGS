@@ -2,10 +2,11 @@ import torch
 import torch.nn as nn
 import numpy as np
 from torch.fft import fft2, ifft2, fftshift
-from . import LinearOperator
+from . import register_operator, LinearOperator
 from .modules.kernel import Kernel
 
-class MotionBlurCircular(LinearOperator):
+@register_operator(name='motion_blur')
+class MotionBlur(LinearOperator):
     def __init__(self, kernel_size, intensity, channels, img_dim, device, seed=None) -> None:
         assert channels in [1, 3], 'The number of channels should be either 1 or 3!'
         self.kernel_size = kernel_size
@@ -28,7 +29,7 @@ class MotionBlurCircular(LinearOperator):
 
     @property
     def display_name(self):
-        return 'mblur-circ'
+        return 'mblur'
 
     def forward(self, x, **kwargs):
         return fftshift(ifft2(self.full_spectrum * fft2(x)).real, dim=(-2,-1))
