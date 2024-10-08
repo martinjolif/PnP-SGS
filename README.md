@@ -19,15 +19,12 @@ Download the corresponding checkpoint from the links below and move it to ./mode
 
 ```
 python3 posterior_sampler.py \
---model_config=configs/model_config.yaml \
---diffusion_config=configs/diffusion_config.yaml \
---task_config={TASK-CONFIG};
-```
 --data_config=configs/data_config.yaml \
 --model_config=configs/model_config.yaml \
 --diffusion_config=configs/diffusion_config.yaml \
 --gibbs_config=configs/gibbs_config.yaml \
 --operator_config={OPERATOR-CONFIG};
+```
 
 ### 5) Citation 
 
