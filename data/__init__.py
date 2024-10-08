@@ -56,14 +56,4 @@ class FFHQDataset(VisionDataset):
         img = cv2.resize(img, dsize=(256, 256), interpolation=cv2.INTER_CUBIC)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        #set BSNR
-        BSNR = 60 # SNR expressed in decibels
-        P_signal = img.var() # signal power
-        sigma = np.sqrt((P_signal/10**(BSNR/10))) # standard deviation of the noise
-        
-        if self.transforms is not None:
-            img = self.transforms(img)
-
-        N = img.shape
-        
-        return img, N, sigma
+        return self.transforms(img)

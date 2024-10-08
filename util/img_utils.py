@@ -4,7 +4,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 
-def compute_last_diff_step(t_start, N_bi):
+def compute_last_diff_step(t, t_start, N_bi):
     if t < N_bi:
         t_stop = int(t_start* 0.7)
     else:

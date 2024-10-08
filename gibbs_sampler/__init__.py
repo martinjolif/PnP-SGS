@@ -29,7 +29,7 @@ def get_named_beta_schedule(schedule_name="linear", num_diffusion_timesteps=1000
         raise NotImplementedError(f"unknown beta schedule: {schedule_name}")
 
 class GibbsSampler:
-    def __init__(self, N, Y, sigma, operator, sampler, model, device, 
+    def __init__(self, Y, sigma, operator, sampler, model, device, 
                  N_MC=23, N_bi=20, rho=0.1, rho_decay_rate=0.8):
         self.N_MC = N_MC
         self.N_bi = N_bi
@@ -47,12 +47,12 @@ class GibbsSampler:
         self.alphas = np.cumsum(betas) / np.max(np.cumsum(betas))
 
         # Initialize matrices to store iterates
-        self.X_MC = torch.zeros(size=(3, N[1], N[2], N_MC+1), device=self.device)
-        self.Z_MC = torch.zeros(size=(3, N[1], N[2], N_MC+1), device=self.device)
+        self.X_MC = torch.zeros(size=(3, 256, 256, N_MC+1), device=self.device)
+        self.Z_MC = torch.zeros(size=(3, 256, 256, N_MC+1), device=self.device)
 
         # Initialize X_MC and Z_MC with random values
-        self.X_MC[:,:,:,0] = torch.randn(N, device=self.device)
-        self.Z_MC[:,:,:,0] = torch.randn(N, device=self.device)
+        self.X_MC[:,:,:,0] = torch.randn((3, 256, 256), device=self.device)
+        self.Z_MC[:,:,:,0] = torch.randn((3, 256, 256), device=self.device)
 
     def estimate_time(self, value, array=None):
         if array is None:
