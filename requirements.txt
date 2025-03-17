@@ -5,3 +5,6 @@ opencv-python==4.6.0.66
 matplotlib
 torch
 torchvision
+pyyaml
+scikit-image
+PyWavelets
