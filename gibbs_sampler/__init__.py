@@ -1,6 +1,7 @@
 import torch
 from tqdm import tqdm
 import numpy as np
+from skimage.restoration import estimate_sigma
 
 def get_named_beta_schedule(schedule_name="linear", num_diffusion_timesteps=1000):
     """
@@ -45,6 +46,8 @@ class GibbsSampler:
         # Get alphas using the beta schedule
         betas = get_named_beta_schedule('linear', 1000)
         self.alphas = np.cumsum(betas) / np.max(np.cumsum(betas))
+        #alphas = 1 - betas
+        #self.alphas = np.cumprod(alphas)
 
         # Initialize matrices to store iterates
         self.X_MC = torch.zeros(size=(3, 256, 256, N_MC+1), device=self.device)
@@ -74,12 +77,15 @@ class GibbsSampler:
             self.X_MC[:,:,:,t+1] = self.operator.proximal_generator(
                 self.Z_MC[:,:,:,t], self.Y, self.sigma, rho=self.rho
             )
-
+            
+            # Update noise level 
+            self.sigma = torch.tensor(estimate_sigma(self.X_MC[:,:,:,t+1].cpu(), average_sigmas = True)).to(self.device)
+            
             # Update rho and time step
             rho_iter = self.rho * (self.rho_decay_rate ** t)
             t_start = self.estimate_time(rho_iter)
             t_stop = self.compute_last_diff_step(t_start, t)
-
+            
             # Prior step
             self.Z_MC[:,:,:,t+1] = self.sampler.diffuse_back(
                 x=self.X_MC[:,:,:,t+1].unsqueeze(0), 

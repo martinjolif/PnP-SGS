@@ -54,7 +54,7 @@ def main():
     num_test_images = len(dataset)
     dataloader = get_dataloader(dataset, batch_size=1, num_workers=0, train=False)
 
-    for img in dataloader:
+    for idx, img in enumerate(dataloader):
         X = img.to(device)
         sigma = estimate_sigma(img, average_sigmas = True) #see Appendix A from the paper 
         sigma = torch.tensor(sigma).to(device)
@@ -87,7 +87,7 @@ def main():
         axes[3].set_title('X Reconstructed image')
         axes[3].axis('off');
 
-        plt.savefig(f"results/test.png", dpi=200, bbox_inches='tight')
+        plt.savefig(f"results/test-{idx}.png", dpi=200, bbox_inches='tight')
 
 if __name__ == '__main__':
     main()
