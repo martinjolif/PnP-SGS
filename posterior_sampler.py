@@ -1,8 +1,11 @@
 import torch
+import torchvision.transforms as transforms
+import numpy as np
 import matplotlib.pyplot as plt
 import yaml
 import argparse
 from skimage.restoration import estimate_sigma
+from skimage.metrics import structural_similarity, peak_signal_noise_ratio
 
 from data import get_dataset, get_dataloader
 from guided_diffusion.unet import create_model
@@ -88,6 +91,16 @@ def main():
         axes[3].axis('off');
 
         plt.savefig(f"results/test-{idx}.png", dpi=200, bbox_inches='tight')
+
+        #print metrics
+        inv_transform = transforms.Compose([
+            transforms.Lambda(lambda x: x.clamp(-1, 1).detach())
+        ])
+        img_pred = inv_transform(torch.mean(Z_MC[:,:,:,gibbs_config["N_bi"]:gibbs_config["N_MC"]], axis=-1)).cpu().numpy()
+        ground_truth_img = img.squeeze(0).cpu().numpy()
+        print(f"PSNR on image {idx}: ", peak_signal_noise_ratio(ground_truth_img, img_pred))
+        print(f"SSIM on image {idx}: ", structural_similarity(ground_truth_img, img_pred, data_range = 2, channel_axis = 0))
+
 
 if __name__ == '__main__':
     main()
